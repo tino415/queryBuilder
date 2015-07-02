@@ -1,0 +1,19 @@
+{
+    "name": "tino/query-builder",
+    "description": "Experimental query builder",
+    "license": "GPL",
+    "authors": [
+        {
+            "name": "tino415",
+            "email": "cernakmartin3@gmail.com"
+        }
+    ],
+    "minimum-stability": "alpha",
+    "require": {},
+    "require-def": {
+        "phpunit/phpunit": "4.7.*"
+    },
+    "autoload": {
+        "psr-4" : {"query-builder\\": "/"}
+    }
+}
