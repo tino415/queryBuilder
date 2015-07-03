@@ -14,6 +14,6 @@
         "phpunit/phpunit": "4.7.*"
     },
     "autoload": {
-        "psr-4" : {"query-builder\\": "/"}
+        "psr-4" : {"queryBuilder\\": "src/"}
     }
 }

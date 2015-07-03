@@ -1,6 +1,6 @@
 <?php
 
-namespace tino\queryBuilder;
+namespace queryBuilder;
 
 class Expression
 {
