@@ -27,9 +27,14 @@ class Select extends Expression
         return $this;
     }
 
-    public function from($from)
+    public function from($from, $alias = false)
     {
-        $this->from = $from;
+        if (!$alias) {
+            $this->from = $from;
+        } else {
+            $this->from = [$from, $alias];
+        }
+
         return $this;
     }
 

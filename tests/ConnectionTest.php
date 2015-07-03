@@ -13,38 +13,8 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
         $this->connection = new Connection(
             Config::$config['db']['dsn'],
             Config::$config['db']['username'],
-            Config::$config['db']['password']
-        );
-    }
-
-    public function testSelect()
-    {
-        $this->assertEquals(
-            'SELECT `name`, `password`'."\n",
-            (string) $this->connection->select(['name', 'password'])
-        );
-
-        $this->assertEquals(
-            "SELECT `name`, `password`\nFROM `user`\n",
-            (string) $this->connection
-                ->select(['name', 'password'])
-                ->from('user')
-        );
-
-        $this->assertEquals(
-            "SELECT `name`, `password`, `role_id`\nFROM `user`\n",
-            (string) $this->connection
-                ->select(['name', 'password'])
-                ->addSelectedColl('role_id')
-                ->from('user')
-        );
-
-        $this->assertEquals(
-            "SELECT `name`, `password`, `role_id`, `profile`\nFROM `user`\n",
-            (string) $this->connection
-                ->select(['name', 'password'])
-                ->addSelectedColls(['role_id', 'profile'])
-                ->from('user')
+            Config::$config['db']['password'],
+            'queryBuilder\QueryBuilder'
         );
     }
 
@@ -175,5 +145,10 @@ class ConnectionTest extends \PHPUnit_Framework_TestCase
                 ->innerJoin('translation', ['translation.lang' => '@locale.lang'])
                 ->where(['OR', 'id_' => [1, 5], 'lang' => 'en'])
         );
+    }
+
+    public function tearDown()
+    {
+        $this->connection = null;
     }
 }

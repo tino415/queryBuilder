@@ -6,13 +6,13 @@ class Expression
 {
     public $content;
 
-    public function __construct(array $content)
+    public function __construct($content)
     {
         $this->content = $content;
     }
 
     public function __toString()
     {
-        return implode(' ', $this->content);
+        return $this->content;
     }
 }
