@@ -1,1 +1,4 @@
 /vendor
+.idea
+.phpcomplete_extended
+composer.lock
