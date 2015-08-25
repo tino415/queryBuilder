@@ -26,7 +26,7 @@ class Criteria
         $this->quote = $quote;
     }
 
-    public function binary($column, $operator, $value)
+    public function compare($column, $operator, $value)
     {
         $column = $this->quote->name($column);
         $operator = $this->quote->operator($operator);
@@ -92,8 +92,11 @@ class Criteria
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
-        return implode(' AND ', $this->criteria);
+        return (string) implode(' AND ', $this->criteria);
     }
 }

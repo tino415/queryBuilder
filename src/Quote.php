@@ -10,26 +10,29 @@ class Quote
     protected $pdo;
 
     /** @var string */
-    protected $columnQuote = '`';
+    protected $columnQuote;
 
     /** @var array */
-    protected $operators = [
-        '=', '>=', '<=', '>', '<', '!=',
-    ];
+    protected $operators;
 
     /** @var array */
-    protected $joinTypes = [
-        'INNER', 'LEFT', 'RIGHT',
-    ];
+    protected $joinTypes;
 
     /** @var array */
-    protected $orderTypes = [
-        'ASC', 'DESC',
-    ];
+    protected $orderTypes;
 
-    public function __construct(\PDO $pdo)
-    {
+    public function __construct(
+        \PDO $pdo,
+        $columnQuote = '`',
+        array $operators = ['=', '!=', '>', '<', '>=', '<='],
+        array $joinTypes = ['INNER', 'LEFT', 'RIGHT'],
+        array $orderTypes = ['ASC', 'DESC']
+    ) {
         $this->pdo = $pdo;
+        $this->columnQuote = $columnQuote;
+        $this->operators = $operators;
+        $this->joinTypes = $joinTypes;
+        $this->orderTypes = $orderTypes;
     }
 
     public function name($column)

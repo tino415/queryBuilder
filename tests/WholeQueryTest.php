@@ -5,9 +5,9 @@ use queryBuilder\Query;
 use queryBuilder\QueryFactory;
 use queryBuilder\Quote;
 
-class BasicTest extends \PHPUnit_framework_TestCase
+class WholeQueryTest extends \PHPUnit_framework_TestCase
 {
-    public function testTest()
+    public function testGenerating()
     {
         $pdo = new \PDO(
             Config::$config['db']['dsn'],
@@ -24,12 +24,19 @@ class BasicTest extends \PHPUnit_framework_TestCase
             ->from('user', 'us')
             ->join('INNER', 'role', 'us.role_id', 'rl.id', 'rl')
             ->where($factory->criteria()
-                ->binary('active', '=', 1)
-                ->binary('rl.type', '=', 'admin')
+                ->compare('active', '=', 1)
+                ->compare('rl.type', '=', 'admin')
                 ->in('us.name', ['jozef', 'fero', 'jano', 'tino', 'martin', '32'])
             )
             ->orderBy(['accessLevel', 'name'], 'ASC');
 
-        echo $query;
+        $this->assertEquals(
+            "SELECT `name`, `password`\n" .
+            "FROM `user` AS `us`\n" .
+            "INNER JOIN `role` AS `rl` ON `us`.`role_id` = `rl`.`id`\n" .
+            "WHERE `active` = 1 AND `rl`.`type` = 'admin' AND `us`.`name` IN ('jozef', 'fero', 'jano', 'tino', 'martin', '32')\n" .
+            "ORDER BY `accessLevel`, `name` ASC\n",
+            (string)$query
+        );
     }
 }
