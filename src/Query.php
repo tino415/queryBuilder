@@ -103,6 +103,7 @@ class Query
         $query .= (empty($this->where)) ? '' : 'WHERE ' . implode(' AND ', $this->where) . "\n";
         $query .= (empty($this->groupBy)) ? '' : 'GROUP BY ' . implode(', ', $this->groupBy) . "\n";
         $query .= (empty($this->orderBy)) ? '' : 'ORDER BY ' . implode(', ', $this->orderBy) . "\n";
+        $query .= (empty($this->having)) ? '' : 'HAVING ' . implode(' AND ', $this->having) . "\n";
         $query .= (!$this->limit) ? '' : 'LIMIT ' . $this->limit . "\n";
         $query .= (!$this->offset) ? '' : 'OFFSET ' . $this->offset . "\n";
 
