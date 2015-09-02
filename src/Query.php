@@ -33,17 +33,6 @@ class Query
         return $this;
     }
 
-    public function buildSelect()
-    {
-        $select = $this->select;
-
-        array_walk($select, function(&$item, $key) {
-            $item = ($item == $key) ? $item : "$item AS $key";
-        });
-
-        return implode(', ', $select);
-    }
-
     public function from($table, $alias = null)
     {
         $this->from = $this->quote->name($table);
@@ -97,23 +86,28 @@ class Query
         return $this;
     }
 
+    public function offset($offset)
+    {
+        $this->offset = (integer) $offset;
+        return $this;
+    }
+
+    public function buildSelect()
+    {
+        $select = $this->select;
+
+        array_walk($select, function(&$item, $key) {
+            $item = ($item == $key) ? $item : "$item AS $key";
+        });
+
+        return implode(', ', $select);
+    }
+
     public function buildUpdateSet()
     {
         $set = $this->set;
         array_walk($set, function(&$item, $key) {$item = "$key = $item";});
         return implode(', ', $set);
-    }
-
-    public function buildInsertColumns()
-    {
-        $columns = array_keys($this->set);
-        return implode(', ', $columns);
-    }
-
-    public function offset($offset)
-    {
-        $this->offset = (integer) $offset;
-        return $this;
     }
 
     public function __toString()
@@ -143,7 +137,7 @@ class Query
 
     public function insert()
     {
-        $query = "INSERT INTO $this->from " . '(' . $this->buildInsertColumns() .")\n";
+        $query = "INSERT INTO $this->from " . '(' . implode(', ', array_keys($this->set)) .")\n";
         $query .= "VALUES (" . implode(', ', $this->set) . ")\n";
 
         return $query;
