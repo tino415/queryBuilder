@@ -92,37 +92,6 @@ class Quote
         return '(' . implode(', ', $values) . ')';
     }
 
-    public function columns($columns)
-    {
-        if ($columns instanceof Literal) {
-            return $columns;
-        }
-
-        foreach($columns as $index => $column) {
-            $columns[$index] = $this->name($column);
-        }
-
-        return implode(', ', $columns);
-    }
-
-    public function aliasedColumns($columns)
-    {
-        if ($columns instanceof Literal) {
-            return $columns;
-        }
-
-        $escaped = [];
-        foreach($columns as $index => $column) {
-            if (is_int($index)) {
-                $escaped[] = $this->name($column);
-            } else {
-                $escaped[] = $this->name($column) . ' AS ' . $this->name($index);
-            }
-        }
-
-        return implode(', ' , $escaped);
-    }
-
     public function joinType($type)
     {
         if ($type instanceof Literal) {

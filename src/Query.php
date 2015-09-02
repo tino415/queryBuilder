@@ -33,6 +33,17 @@ class Query
         return $this;
     }
 
+    public function buildSelect()
+    {
+        $select = $this->select;
+
+        array_walk($select, function(&$item, $key) {
+            $item = ($item == $key) ? $item : "$item AS $key";
+        });
+
+        return implode(', ', $select);
+    }
+
     public function from($table, $alias = null)
     {
         $this->from = $this->quote->name($table);
@@ -64,8 +75,7 @@ class Query
 
     public function orderBy($column, $type = 'ASC')
     {
-        $this->orderBy[] = ((is_array($column)) ?
-                $this->quote->columns($column) : $this->quote->name($column)) . ' ' . $this->quote->orderType($type);
+        $this->orderBy[] = $this->quote->name($column) . " $type";
         return $this;
     }
 
@@ -108,7 +118,7 @@ class Query
 
     public function __toString()
     {
-        $query = 'SELECT ' . ((empty($this->select)) ? '*' : implode(', ', $this->select) . "\n");
+        $query = 'SELECT ' . ((empty($this->select)) ? '*' : $this->buildSelect() . "\n");
         $query .= (empty($this->from)) ? '' : "FROM $this->from\n";
         $query .= (empty($this->joins)) ? '' : implode("\n", $this->joins) . "\n";
         $query .= (empty($this->where)) ? '' : 'WHERE ' . implode(' AND ', $this->where) . "\n";

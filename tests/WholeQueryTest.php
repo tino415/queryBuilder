@@ -37,14 +37,14 @@ class WholeQueryTest extends \PHPUnit_framework_TestCase
                 ->compare('rl.name', '=', 'admin')
                 ->in('us.name', ['jozef', 'fero', 'jano', 'tino', 'martin', '32'])
             )
-            ->orderBy(['role_id', 'name'], 'ASC');
+            ->orderBy('role_id', 'ASC');
 
         $this->assertEquals(
             "SELECT `us`.`name`, `us`.`password`\n" .
             "FROM `user` AS `us`\n" .
             "INNER JOIN `role` AS `rl` ON `us`.`role_id` = `rl`.`id`\n" .
             "WHERE `active` = 1 AND `rl`.`name` = 'admin' AND `us`.`name` IN ('jozef', 'fero', 'jano', 'tino', 'martin', '32')\n" .
-            "ORDER BY `role_id`, `name` ASC\n",
+            "ORDER BY `role_id` ASC\n",
             (string)$query
         );
     }
