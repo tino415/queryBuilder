@@ -89,4 +89,23 @@ class WholeQueryTest extends \PHPUnit_framework_TestCase
             $query->insert()
         );
     }
+
+    public function testDelete()
+    {
+        $quote = new Quote($this->getConnection());
+
+        $factory = new QueryFactory($quote);
+
+        $query = $factory->query()
+            ->from('user')
+            ->where($factory->criteria()
+                ->compare('name', '=', 'tino415')
+            );
+
+        $this->assertEquals(
+            "DELETE FROM `user`\n" .
+            "WHERE `name` = 'tino415'\n",
+            $query->delete()
+        );
+    }
 }

@@ -136,7 +136,8 @@ class Query
 
         $query = "UPDATE $this->from\n";
         $query .= "SET " . $this->buildUpdateSet() . "\n";
-        $query .= 'WHERE ' . implode(' AND ', $this->where) . "\n";
+        $query .= (empty($this->where)) ? '' : 'WHERE ' . implode(' AND ', $this->where) . "\n";
+
         return $query;
     }
 
@@ -144,6 +145,14 @@ class Query
     {
         $query = "INSERT INTO $this->from " . '(' . $this->buildInsertColumns() .")\n";
         $query .= "VALUES (" . implode(', ', $this->set) . ")\n";
+
+        return $query;
+    }
+
+    public function delete()
+    {
+        $query = "DELETE FROM $this->from\n";
+        $query .= (empty($this->where)) ? '' : 'WHERE ' . implode(' AND ', $this->where) . "\n";
 
         return $query;
     }
