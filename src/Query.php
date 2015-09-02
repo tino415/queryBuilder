@@ -22,13 +22,14 @@ class Query
         $this->quote = $quote;
     }
 
-    public function select($columns)
+    public function select($column, $alias = false)
     {
-        if (func_num_args() > 1 || !is_array($columns)) {
-            $columns = func_get_args();
+        $name = $this->quote->name($column);
+        if ($alias) {
+            $this->select[$this->quote->name($alias)] = $name;
+        } else {
+            $this->select[$name] = $name;
         }
-
-        $this->select[] = $this->quote->aliasedColumns($columns);
         return $this;
     }
 
@@ -55,19 +56,16 @@ class Query
         return $this;
     }
 
-    public function groupBy($columns)
+    public function groupBy($column)
     {
-        if (func_num_args() > 1 || !is_array($columns)) {
-            $columns = func_get_args();
-        }
-
-        $this->groupBy[] = $this->quote->columns($columns);
+        $this->groupBy[] = $this->quote->name($column);
         return $this;
     }
 
     public function orderBy($column, $type = 'ASC')
     {
-        $this->orderBy[] = ((is_array($column)) ? $this->quote->columns($column) : $this->quote->name($column)) . ' ' . $this->quote->orderType($type);
+        $this->orderBy[] = ((is_array($column)) ?
+                $this->quote->columns($column) : $this->quote->name($column)) . ' ' . $this->quote->orderType($type);
         return $this;
     }
 
@@ -85,8 +83,21 @@ class Query
 
     public function set($column, $value)
     {
-        $this->set[] = $this->quote->name($column) . ' = ' . $this->quote->value($value);
+        $this->set[$this->quote->name($column)] = $this->quote->value($value);
         return $this;
+    }
+
+    public function buildUpdateSet()
+    {
+        $set = $this->set;
+        array_walk($set, function(&$item, $key) {$item = "$key = $item";});
+        return implode(', ', $set);
+    }
+
+    public function buildInsertColumns()
+    {
+        $columns = array_keys($this->set);
+        return implode(', ', $columns);
     }
 
     public function offset($offset)
@@ -106,6 +117,23 @@ class Query
         $query .= (empty($this->having)) ? '' : 'HAVING ' . implode(' AND ', $this->having) . "\n";
         $query .= (!$this->limit) ? '' : 'LIMIT ' . $this->limit . "\n";
         $query .= (!$this->offset) ? '' : 'OFFSET ' . $this->offset . "\n";
+
+        return $query;
+    }
+
+    public function update()
+    {
+
+        $query = "UPDATE $this->from\n";
+        $query .= "SET " . $this->buildUpdateSet() . "\n";
+        $query .= 'WHERE ' . implode(' AND ', $this->where) . "\n";
+        return $query;
+    }
+
+    public function insert()
+    {
+        $query = "INSERT INTO $this->from " . '(' . $this->buildInsertColumns() .")\n";
+        $query .= "VALUES (" . implode(', ', $this->set) . ")\n";
 
         return $query;
     }
