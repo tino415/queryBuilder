@@ -1,7 +1,5 @@
 <?php namespace tests;
 
-use queryBuilder\Criteria;
-use queryBuilder\Query;
 use queryBuilder\QueryFactory;
 use queryBuilder\Quote;
 
@@ -20,22 +18,22 @@ class WholeQueryTest extends \PHPUnit_framework_TestCase
         $factory = new QueryFactory($quote);
 
         $query = $factory->query()
-            ->select('name', 'password')
+            ->select('us.name', 'us.password')
             ->from('user', 'us')
             ->join('INNER', 'role', 'us.role_id', 'rl.id', 'rl')
             ->where($factory->criteria()
                 ->compare('active', '=', 1)
-                ->compare('rl.type', '=', 'admin')
+                ->compare('rl.name', '=', 'admin')
                 ->in('us.name', ['jozef', 'fero', 'jano', 'tino', 'martin', '32'])
             )
-            ->orderBy(['accessLevel', 'name'], 'ASC');
+            ->orderBy(['role_id', 'name'], 'ASC');
 
         $this->assertEquals(
-            "SELECT `name`, `password`\n" .
+            "SELECT `us`.`name`, `us`.`password`\n" .
             "FROM `user` AS `us`\n" .
             "INNER JOIN `role` AS `rl` ON `us`.`role_id` = `rl`.`id`\n" .
-            "WHERE `active` = 1 AND `rl`.`type` = 'admin' AND `us`.`name` IN ('jozef', 'fero', 'jano', 'tino', 'martin', '32')\n" .
-            "ORDER BY `accessLevel`, `name` ASC\n",
+            "WHERE `active` = 1 AND `rl`.`name` = 'admin' AND `us`.`name` IN ('jozef', 'fero', 'jano', 'tino', 'martin', '32')\n" .
+            "ORDER BY `role_id`, `name` ASC\n",
             (string)$query
         );
     }
